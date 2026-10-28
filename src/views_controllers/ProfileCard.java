@@ -34,11 +34,14 @@ public class ProfileCard {
 		java.util.List<String> otherPrefs = otherProfile.getPreferencesAsArray();
 		boolean matches[] = new boolean[userPrefs.size()];
 		int score = match.getScore();
-		int maxScore = 35;
-		int percentage = (int) (((double) (score + 20) / (maxScore + 20)) * 100);
+		int maxScore = 55;
+		int minScore = -30;
+		int percentage = (int) Math.round(
+			((double) (score - minScore) / (maxScore - minScore)) * 100
+		);
 
 		nameLabel.setText("Match: " + match.getOtherUser());
-		percentLabel.setText("Compatability: " + percentage + "%");
+		percentLabel.setText("Compatibility: " + percentage + "%");
 
 		//labels.getChildren().add(cleanMatchLabel);
 		
