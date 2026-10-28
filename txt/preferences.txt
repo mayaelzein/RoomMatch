@@ -1,5 +1,5 @@
 early late
 low medium high
 rare sometimes often
-Computer_Science Math Philosophy
+Computer_Science Engineering Business Biology Psychology Nursing Education Communications Math Philosophy Political_Science Economics Art Undeclared Other
 male female non-binary non-disclosed

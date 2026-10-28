@@ -1,32 +1,24 @@
 package views_controllers;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.Scanner;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Separator;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import model.ReadWrite;
 import model.SortProfiles;
 import model.UserProfile;
-import model.ReadWrite;
 
 public class MainPageView implements Page {
 	RoomMatchGUI controller;
@@ -84,49 +76,33 @@ public class MainPageView implements Page {
 	private void setInfo() throws IOException {
 		boolean isAdmin = controller.isAdmin();
 		controller.resetPreferences();
-		//controller.loadDealbreakers();
 
 		option4.setVisible(isAdmin);
 		option5.setVisible(isAdmin);
 		
 		preferences = userProfile.getPreferencesAsArray();
 		dealbreakers = userProfile.getDealbreakersAsArray();
-		
-		//System.out.println(preferences.toString() + "\n" + dealbreakers.toString());
-		
+
 		prefDescr = ReadWrite.RetrieveFileAsTextArr("/txt/descriptions.txt");
 
-		/*
-		String sleepText = "Your Sleep Schedule: " + userProfile.getSleepSchedule();
-		if (userProfile.isSleepDealbreaker())
-			sleepText += " (deal-breaker)";
-
-		String cleanText = "Your Cleanliness: " + userProfile.getCleanliness();
-		if (userProfile.isCleanlinessDealbreaker())
-			cleanText += " (deal-breaker)";
-
-		String guestText = "Your Guest Frequency: " + userProfile.getGuests();
-		if (userProfile.isGuestsDealbreaker())
-			guestText += " (deal-breaker)";
-		*/
-
-		//controller.getPreferences();
 		welcomeLabel.setText("Welcome " + userProfile.getUser() + "!");
-		
-		/*
-		sleepLabel.setText(sleepText);
-		cleanlinessLabel.setText(cleanText);
-		guestsLabel.setText(guestText);
-		*/
-		
-		for(int i=0; i<preferences.size(); i++) {
+
+		yourPreferences.getChildren().clear();
+		yourPreferences.setSpacing(10);
+
+		for (int i = 0; i < preferences.size(); i++) {
 			String desc = prefDescr.get(i) + ":\n";
-			desc += preferences.get(i);
-			if( dealbreakers.get(i) ) desc += " (deal-breaker)";
-			desc += "\n\n";
+			desc += formatPreference(preferences.get(i));
+
+			if (dealbreakers.get(i)) {
+				desc += " (deal-breaker)";
+			}
+
 			Label label = new Label(desc);
 			label.setFont(system);
 			label.setWrapText(true);
+			label.setMaxWidth(Double.MAX_VALUE);
+
 			yourPreferences.getChildren().add(label);
 		}
 
@@ -148,6 +124,39 @@ public class MainPageView implements Page {
 		}
 		scrollPane.setContent(infoBox);
 		
+	}
+
+	private String formatPreference(String value) {
+		if (value == null) {
+			return "Not specified";
+		}
+
+		if (value.equalsIgnoreCase("non-disclosed")) {
+			return "Prefer not to say";
+		}
+
+		if (value.equalsIgnoreCase("rare")) {
+			return "Rarely";
+		}
+
+		String formatted = value.replace('_', ' ');
+		String[] words = formatted.split(" ");
+		StringBuilder result = new StringBuilder();
+
+		for (String word : words) {
+			if (!word.isEmpty()) {
+				if (result.length() > 0) {
+					result.append(" ");
+				}
+
+				result.append(
+					Character.toUpperCase(word.charAt(0))
+					+ word.substring(1)
+				);
+			}
+		}
+
+		return result.toString();
 	}
 
 	@FXML

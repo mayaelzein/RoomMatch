@@ -1,12 +1,16 @@
 package model;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 
 import org.mindrot.jbcrypt.BCrypt;
-
-import java.util.Collections;
-import java.util.ArrayList;
 
 // TODO: The database should only be able to be accessed by an admin account. 
 public class DatabaseManager {
@@ -571,8 +575,8 @@ public class DatabaseManager {
 				sql += "p." + name.get(i) + (i!=name.size()-1 ? ", " : " ");
 			}
 			sql += "FROM accounts a "
-				 + "JOIN preferences p ON a.id = p.user_id "
-				 + "WHERE a.id != ?";
+				+ "JOIN preferences p ON a.id = p.user_id "
+				+ "WHERE a.id != ? AND a.is_admin = 0";
 			
 			try (Connection connection = DriverManager.getConnection(URL);
 				PreparedStatement pstmt = connection.prepareStatement(sql)) {

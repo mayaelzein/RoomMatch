@@ -87,10 +87,47 @@ public class ProfileCard {
 	}
 
 	private String compareText(String currentValue, String otherValue, boolean isMatch) {
+		String formattedCurrent = formatPreference(currentValue);
+		String formattedOther = formatPreference(otherValue);
+
 		if (isMatch) {
-			return "Match (" + currentValue + ")";
+			return "Match (" + formattedCurrent + ")";
 		}
-		return "Mismatch (" + currentValue + " vs " + otherValue + ")";
+
+		return "Mismatch (" + formattedCurrent + " vs " + formattedOther + ")";
+	}
+
+	private String formatPreference(String value) {
+		if (value == null) {
+			return "Not specified";
+		}
+
+		if (value.equalsIgnoreCase("non-disclosed")) {
+			return "Prefer not to say";
+		}
+
+		if (value.equalsIgnoreCase("rare")) {
+			return "Rarely";
+		}
+
+		String formatted = value.replace('_', ' ');
+		String[] words = formatted.split(" ");
+		StringBuilder result = new StringBuilder();
+
+		for (String word : words) {
+			if (!word.isEmpty()) {
+				if (result.length() > 0) {
+					result.append(" ");
+				}
+
+				result.append(
+					Character.toUpperCase(word.charAt(0))
+					+ word.substring(1)
+				);
+			}
+		}
+
+		return result.toString();
 	}
 	
 	private String buildWarningText(boolean matches[], java.util.List<String> descr) {
